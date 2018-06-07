@@ -1,0 +1,3 @@
+[defaults]
+private_key_file=~/.ssh/prod.pem
+inventory=./ec2.py
