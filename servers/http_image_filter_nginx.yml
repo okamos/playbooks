@@ -1,0 +1,17 @@
+- name: Build server
+  hosts: 127.0.0.1
+  connection: local
+  gather_facts: no
+  roles:
+    - { role: '../roles/ec2' }
+
+- name: Nginx with Image Filter
+  hosts: "tag_Name_{{ ec2.tag_name }}"
+  remote_user: ubuntu
+  gather_facts: true
+  become: yes
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  roles:
+    - { role: '../roles/prelude' }
+    - { role: '../roles/nginx', config: image_filter }

@@ -1,0 +1,11 @@
+image_filter:
+  cache: false # if set false use CDN, otherwise set true
+  host: contents.origin.net # set to proxy_pass domain, which is used for origin
+ec2:
+  ami_id: ami-0d74386b # ubuntu 16.04
+  group:
+    - http_server # security group
+  tag_name: image_filter_nginx
+  instance_type: t2.micro
+  key_name: your_key
+  vpc_subnets: default-* # wild card match default-a and default-c
