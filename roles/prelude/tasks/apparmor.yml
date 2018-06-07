@@ -1,0 +1,14 @@
+- name: check service existence
+  stat: path=/etc/init.d/apparmor
+  register: apparmor_service
+
+- name: stop service
+  service: name=apparmor state=stopped
+  when: apparmor_service.stat.exists
+
+- name: remove service
+  service: name=apparmor enabled=no
+  when: apparmor_service.stat.exists
+
+- name: remove package
+  apt: name=apparmor state=absent purge=yes

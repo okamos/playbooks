@@ -1,0 +1,11 @@
+- name: add apt-repository software-properties-common
+  apt: name=software-properties-common state=latest
+
+- name: add apt-repository transport-https
+  apt: name=apt-transport-https state=latest
+
+- apt: pkg={{ item }} state=present update_cache=yes
+  with_items:
+    - tmux
+    - vim
+    - zip

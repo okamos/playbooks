@@ -1,0 +1,9 @@
+- sysctl: name=net.core.somaxconn value=65535
+- sysctl: name=net.ipv4.ip_local_port_range value="16384 65535"
+- sysctl: name=net.ipv4.tcp_fin_timeout value=10
+- sysctl: name=net.ipv4.tcp_keepalive_time value=60
+- sysctl: name=net.ipv4.tcp_keepalive_intvl value=5
+- sysctl: name=net.ipv4.tcp_keepalive_probes value=3
+- sysctl: name=net.ipv4.tcp_rfc1337 value=1
+- sysctl: name=net.ipv4.tcp_syncookies value=1
+- sysctl: name=net.ipv4.tcp_tw_reuse value=1

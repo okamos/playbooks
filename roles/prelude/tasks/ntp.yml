@@ -1,0 +1,2 @@
+- apt: pkg=ntp state=present update_cache=yes
+- service: name=ntp state=started enabled=yes
