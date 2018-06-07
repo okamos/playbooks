@@ -1,0 +1,15 @@
+- name: Nginx | make document root
+  file:
+    path: /var/www/html
+    state: directory
+
+- name: Nginx | send health check file
+  template:
+    src: health.txt
+    dest: /var/www/html/
+
+- name: Nginx | send config file
+  template:
+    src: image_filter.conf
+    dest: /etc/nginx/conf.d
+  notify: restart nginx

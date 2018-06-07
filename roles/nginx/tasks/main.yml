@@ -1,0 +1,73 @@
+- name: Nginx | install dependencies
+  apt: "name={{ item }} state=latest update_cache=yes"
+  with_items:
+    - gcc
+    - libgd2-xpm-dev
+    - libpcre3-dev
+    - libssl-dev
+
+- name: Nginx | check existing tarball
+  stat: path=/tmp/nginx-{{ nginx.version }}.tar.gz
+  register: nginx_tarball
+
+- name: Nginx | download soruce
+  get_url:
+    url: http://nginx.org/download/nginx-{{ nginx.version }}.tar.gz
+    dest: /tmp
+  when: nginx_tarball.stat.exists == false
+
+- name: Nginx | unarchive source
+  unarchive:
+    copy: no
+    src: /tmp/nginx-{{ nginx.version }}.tar.gz
+    dest: /tmp
+  when: nginx_tarball.stat.exists == false
+
+- name: Nginx | make and install
+  shell: ./configure --prefix=/etc/nginx --sbin-path=/usr/sbin/nginx --modules-path=/usr/lib --with-http_image_filter_module && make && make install
+  args:
+    chdir: '/tmp/nginx-{{ nginx.version }}'
+  when: nginx_tarball.stat.exists == false
+
+- name: Nginx | move config files
+  shell: mv /etc/nginx/conf/* /etc/nginx/
+  when: nginx_tarball.stat.exists == false
+
+- name: Nginx | add default file
+  file:
+    path: /etc/default/nginx
+    state: touch
+
+- name: Nginx | add ulimit for parallel accesses
+  lineinfile:
+    path: /etc/default/nginx
+    line: 'ULIMIT="-n 65535"'
+
+- name: Nginx | send logrotate
+  template:
+    src: logrotate
+    dest: /etc/logrotate.d/nginx
+
+- name: Nginx | send service
+  template:
+    src: nginx.service
+    dest: /etc/systemd/system/
+
+- name: Nginx | make log directory
+  file:
+    path: /var/log/nginx
+    state: directory
+
+- name: Nginx | send config file
+  template:
+    src: nginx.conf
+    dest: /etc/nginx/
+  notify: restart nginx
+
+- name: Nginx | make conf.d directory
+  file:
+    path: /etc/nginx/conf.d
+    state: directory
+
+- include: "{{ config }}.yml"
+  when: config is defined
